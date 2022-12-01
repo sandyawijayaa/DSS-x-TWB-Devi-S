@@ -12,23 +12,18 @@ from dash.dependencies import Input, Output, State
 import plotly.figure_factory as ff
 
 #---------------------------------------------------------------
-
+# change file paths here
 df = pd.read_csv("/Users/angelinelee/Documents/get /mdl_h5pactivity_attempts-20221014-185632.csv")  
+student = pd.read_csv("/Users/angelinelee/Downloads/mdl_student.csv", encoding = 'unicode_escape')
+learner = pd.read_csv("/Users/angelinelee/Downloads/mdl_learner.csv", encoding = 'unicode_escape')
+request_data = pd.read_csv("/Users/angelinelee/Downloads/learnerRequestData-1664008267.csv", encoding = 'unicode_escape')
+
 df['duration per point'] = df['duration in seconds']/df['maxscore']
 
 df['h5pactivityid'] = df['h5pactivityid'].astype(str)
 
 df = df[["duration per point", "h5pactivityid"]]
 app = dash.Dash(__name__)
-
-
-#_______________________________________________________________
-#demographics visualizations
-student = pd.read_csv("/Users/angelinelee/Downloads/mdl_student.csv", encoding = 'unicode_escape')
-learner = pd.read_csv("/Users/angelinelee/Downloads/mdl_learner.csv", encoding = 'unicode_escape')
-request_data = pd.read_csv("/Users/angelinelee/Downloads/learnerRequestData-1664008267.csv", encoding = 'unicode_escape')
-# request_data.drop('School', 1)
-
 
 #---------------------------------------------------------------
 

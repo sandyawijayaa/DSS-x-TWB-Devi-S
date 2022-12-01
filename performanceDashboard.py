@@ -12,9 +12,11 @@ from dash.dependencies import Input, Output, State
 # app = dash.Dash(__name__)
 import plotly.figure_factory as ff
 
-
+#---------------------------------------------------------------
+# change file paths here
 
 df = pd.read_csv("/Users/angelinelee/Downloads/mdl_h5pactivity_attempts-20221014-185632.csv")
+attempts = df.copy()
 df['duration per point'] = df['duration in seconds']/df['maxscore']
 
 df['h5pactivityid'] = df['h5pactivityid'].astype(str)
@@ -40,8 +42,8 @@ app.layout = html.Div([
         html.Br(),
         html.Label(['Choose Type of Graph'],style={'font-weight': 'bold', "text-align": "center"}),
         dcc.Dropdown(id='graph_type',
-            options=["Histogram", "KDE Plots", "Duration Plots"],
-            value='Histogram',
+            options=["Duration Plots", "Score Plots", "Success Rate Table", "Mean Duration Table", "Mean Scores Table"],
+            value="Duration Plots",
             multi=False,
             disabled=False,
             clearable=True,
@@ -86,13 +88,7 @@ app.layout = html.Div([
 
 ])
 
-def histogram(first, second, third):
-    df1 = df[(df["h5pactivityid"] == first) | (df["h5pactivityid"] == second)| (df["h5pactivityid"] == third)]
-    fig = px.histogram(df1, x= "h5pactivityid")
-    fig.update_layout(title_text = 'Distribution of h5activityid')
-    return fig
-
-def KDEplt(first, second, third):
+def duration(first, second, third):
     dff = df[(df['h5pactivityid'] == first) |
             (df['h5pactivityid'] == second) |
             (df['h5pactivityid'] == third)]
@@ -114,7 +110,7 @@ def KDEplt(first, second, third):
     fig.update_layout(title_text = 'Distribution of durations obtained for different activities')
     return fig
 
-def duration(first, second, third):
+def scores(first, second, third):
     dff = df[(df['h5pactivityid'] == first)]
 
 
@@ -132,6 +128,52 @@ def duration(first, second, third):
     fig.update_layout(title_text = 'Distribution of raw scores obtained for different activities')
     return fig
 
+def success_rate():
+    activityCount = attempts['h5pactivityid'].value_counts()
+    attempts_table = activityCount.to_frame().sort_index(ascending=True)
+    attempts_table
+
+    # finding total successes
+    filterSuccess = attempts['success if all question are answered correctly then its 1 otherwise 0'] == 1
+    attempts.where(filterSuccess, inplace = True)
+    success = attempts['h5pactivityid'].value_counts().astype(int)
+    # success_table = success.to_frame().sort_index(ascending=True)
+
+    # find success rate: success/attempts --> lower success rate = more difficult
+    success_count = success / activityCount
+    successrate_table = success_count.to_frame().sort_index(ascending=True)
+    successrate_table.reset_index(inplace=True)
+    successrate_table = successrate_table.rename(columns = {'index':'Activity ID', 'h5pactivityid':'Success Rate (%)'})
+
+    successrate_table['Activity ID'] = successrate_table['Activity ID'].astype(int).astype(str)
+
+    return px.bar(successrate_table, x = "Activity ID", y="Success Rate (%)", title = "Success Rate per Activity")
+
+def mean_duration():
+    grouped = attempts.groupby(['userid', 'h5pactivityid', 'duration in seconds'])['h5pactivityid'].size().reset_index(name='counts')
+    # activitycount = grouped['h5pactivityid'].value_counts()
+    mean_duration_by_activity = grouped.groupby(['h5pactivityid']).agg({'duration in seconds':'mean'})
+    mean_duration_by_activity.reset_index(inplace=True)
+    mean_duration_by_activity = mean_duration_by_activity.rename(columns = {'h5pactivityid':'Activity ID', 'duration in seconds':'Seconds'})
+    # ax = px.bar(mean_duration_by_activity, x="Activity ID", y="Seconds")
+    mean_duration_by_activity['Activity ID'] = mean_duration_by_activity['Activity ID'].astype(int).astype(str)
+
+    return px.bar(mean_duration_by_activity, x = "Activity ID", y="Seconds", title = "Mean Duration in Seconds per Activity")
+
+def mean_scores():
+    grouped_scores = attempts.groupby(['userid', 'h5pactivityid', 'rawscore (score received)'])['h5pactivityid'].size().reset_index(name='counts')
+    # mean_score_by_activity = grouped_scores.groupby(['h5pactivityid']).agg({'rawscore (score received)':'mean'})
+    max_score_by_activity = grouped_scores.groupby(['h5pactivityid']).agg({'rawscore (score received)':'max'})
+
+    max_score_by_activity = max_score_by_activity.reset_index()
+    max_score_by_activity = max_score_by_activity.rename(columns = {'h5pactivityid':'Activity ID', 'rawscore (score received)':'Score'})
+    max_score_by_activity.fillna(0)
+    max_score_by_activity['Activity ID'] = max_score_by_activity['Activity ID'].astype(float).astype(int).astype(str)
+
+    return px.bar(max_score_by_activity, x = "Activity ID", y="Score", title = 'Mean Score by Activity')
+
+
+
 @app.callback(
     Output('our_graph','figure'),
     [Input('graph_type', 'value'),
@@ -141,21 +183,24 @@ def duration(first, second, third):
 )
 
 def build_graph(graph_type, first, second, third):
-
     fig = None
-    
-    if graph_type == "Histogram":
 
-        fig = histogram(first, second, third)
-
-    if graph_type == "KDE Plots":
-        fig = KDEplt(first, second, third)
-    
     if graph_type == "Duration Plots":
         fig = duration(first, second, third)
+    
+    if graph_type == "Score Plots":
+        fig = scores(first, second, third)
+
+    if graph_type == "Success Rate Table":
+        fig = success_rate()
+
+    if graph_type == "Mean Duration Table":
+        fig = mean_duration()
+    
+    if graph_type == "Mean Scores Table":
+        fig = mean_scores()
 
     return fig
 
 if __name__ == '__main__':
-    webbrowser.get('chrome').open('http://127.0.0.1:8050')
     app.run_server(debug=False)
