@@ -5,7 +5,9 @@ There are 2 files available - the Performance Dashboard and the Demographics Das
 The performance dashboard provides visualizations of:
 - Distribution of raw scores obtained for different activities
 - Distribution of durations obtained for different activities
-- Distribution of h5activityid
+- Success Rate per Activity
+- Mean Duration in Seconds per Activity
+- Mean Score by Activity
 
 The demographics dashboard provides visualizations of:
 - Student Gender Bar Charts
