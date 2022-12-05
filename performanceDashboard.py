@@ -15,7 +15,12 @@ import plotly.figure_factory as ff
 #---------------------------------------------------------------
 # change file paths here
 
-df = pd.read_csv("/Users/angelinelee/Downloads/mdl_h5pactivity_attempts-20221014-185632.csv")
+h5p_activity_path = "/Users/angelinelee/Downloads/mdl_h5pactivity_attempts-20221014-185632.csv"
+
+#---------------------------------------------------------------
+
+df = pd.read_csv(h5p_activity_path)
+
 attempts = df.copy()
 df['duration per point'] = df['duration in seconds']/df['maxscore']
 

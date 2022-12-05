@@ -13,10 +13,17 @@ import plotly.figure_factory as ff
 
 #---------------------------------------------------------------
 # change file paths here
-df = pd.read_csv("/Users/angelinelee/Documents/get /mdl_h5pactivity_attempts-20221014-185632.csv")  
-student = pd.read_csv("/Users/angelinelee/Downloads/mdl_student.csv", encoding = 'unicode_escape')
-learner = pd.read_csv("/Users/angelinelee/Downloads/mdl_learner.csv", encoding = 'unicode_escape')
-request_data = pd.read_csv("/Users/angelinelee/Downloads/learnerRequestData-1664008267.csv", encoding = 'unicode_escape')
+
+h5p_activity_path = "/Users/angelinelee/Documents/get /mdl_h5pactivity_attempts-20221014-185632.csv"
+student_data_path = "/Users/angelinelee/Downloads/mdl_student.csv"
+learner_data_path = "/Users/angelinelee/Downloads/mdl_learner.csv"
+request_data_path = "/Users/angelinelee/Downloads/learnerRequestData-1664008267.csv"
+
+#---------------------------------------------------------------
+df = pd.read_csv(h5p_activity_path)  
+student = pd.read_csv(student_data_path, encoding = 'unicode_escape')
+learner = pd.read_csv(learner_data_path, encoding = 'unicode_escape')
+request_data = pd.read_csv(request_data_path, encoding = 'unicode_escape')
 
 df['duration per point'] = df['duration in seconds']/df['maxscore']
 
