@@ -45,7 +45,7 @@ app = dash.Dash(__name__)
 #---------------------------------------------------------------
 app.layout = html.Div([
 
-    html.Label(['Performance Dashboard'],style={'font-weight': 'bold', "text-align": "center", "font-size": "300%", "font-family": "verdana"}),
+    html.Label(['Demographics Dashboard'],style={'font-weight': 'bold', "text-align": "center", "font-size": "300%", "font-family": "verdana"}),
 
     html.Div([
         dcc.Graph(id='our_graph')
