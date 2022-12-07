@@ -21,8 +21,8 @@ The demographics dashboard provides visualizations of:
 
 To use the files, change the paths to the data files as indicated at the top of the files. 
 
-In demographicsDashboard.py, you will need to change the file paths h5p_activity_path, student_data_path, learner_data_path, request_data_path to the file paths of the respective data sets. 
+In demographicsDashboard.py, you will need to change the file paths h5p_activity_path, student_data_path, learner_data_path, request_data_path to the file paths of the respective data sets. Below the file paths, you can specify which browser you would like to open the dashboard in, such as "safari" or "chrome." 
 
-In performanceDashboard.py, you will need to change the file paths h5p_activity_path to the file path of the h5p activity dataset. 
+In performanceDashboard.py, you will need to change the file paths h5p_activity_path to the file path of the h5p activity dataset. Below the file paths, you can specify which browser you would like to open the dashboard in, such as "safari" or "chrome." 
 
-You might need to open the chrome independently if the server does not launch itself. The link should appear in your terminal.
+You might need to open the chrome independently if the server does not launch itself. The link http://127.0.0.1:8000 should appear in your terminal, which you can paste into any web browser.
