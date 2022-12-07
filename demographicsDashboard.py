@@ -1,3 +1,4 @@
+import webbrowser
 import pandas as pd     
 import plotly           #(version 4.5.0)
 import plotly.express as px
@@ -12,12 +13,13 @@ from dash.dependencies import Input, Output, State
 import plotly.figure_factory as ff
 
 #---------------------------------------------------------------
-# change file paths here
+# change file paths and browser here 
 
-h5p_activity_path = "/Users/angelinelee/Documents/get /mdl_h5pactivity_attempts-20221014-185632.csv"
-student_data_path = "/Users/angelinelee/Downloads/mdl_student.csv"
-learner_data_path = "/Users/angelinelee/Downloads/mdl_learner.csv"
-request_data_path = "/Users/angelinelee/Downloads/learnerRequestData-1664008267.csv"
+h5p_activity_path = "data/mdl_h5pactivity_attempts.csv"
+student_data_path = "data/mdl_student.csv"
+learner_data_path = "data/mdl_learner.csv"
+request_data_path = "data/learnerRequestData.csv"
+browser = "chrome"
 
 #---------------------------------------------------------------
 df = pd.read_csv(h5p_activity_path)  
@@ -133,4 +135,6 @@ def build_graph(graph_type):
 #---------------------------------------------------------------
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    #app.run_server(debug=False)
+    webbrowser.get(browser).open("http://127.0.0.1:8000/")
+    app.run_server(port=8000, host='127.0.0.1')

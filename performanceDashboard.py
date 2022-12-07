@@ -13,9 +13,10 @@ from dash.dependencies import Input, Output, State
 import plotly.figure_factory as ff
 
 #---------------------------------------------------------------
-# change file paths here
+# change file paths and browser here
 
-h5p_activity_path = "/Users/angelinelee/Downloads/mdl_h5pactivity_attempts-20221014-185632.csv"
+h5p_activity_path = "data/mdl_h5pactivity_attempts.csv"
+browser = "chrome"
 
 #---------------------------------------------------------------
 
@@ -140,8 +141,8 @@ def success_rate():
 
     # finding total successes
     filterSuccess = attempts['success if all question are answered correctly then its 1 otherwise 0'] == 1
-    attempts.where(filterSuccess, inplace = True)
-    success = attempts['h5pactivityid'].value_counts().astype(int)
+    success_attempts = attempts.where(filterSuccess, inplace = False)
+    success = success_attempts['h5pactivityid'].value_counts().astype(int)
     # success_table = success.to_frame().sort_index(ascending=True)
 
     # find success rate: success/attempts --> lower success rate = more difficult
@@ -166,16 +167,19 @@ def mean_duration():
     return px.bar(mean_duration_by_activity, x = "Activity ID", y="Seconds", title = "Mean Duration in Seconds per Activity")
 
 def mean_scores():
-    grouped_scores = attempts.groupby(['userid', 'h5pactivityid', 'rawscore (score received)'])['h5pactivityid'].size().reset_index(name='counts')
-    # mean_score_by_activity = grouped_scores.groupby(['h5pactivityid']).agg({'rawscore (score received)':'mean'})
-    max_score_by_activity = grouped_scores.groupby(['h5pactivityid']).agg({'rawscore (score received)':'max'})
+    grouped_scores = attempts.groupby(['userid', 'h5pactivityid', 'scaled % = scaled * 100'])['h5pactivityid'].size().reset_index(name='counts')
+    mean_score_by_activity = grouped_scores.groupby(['h5pactivityid']).agg({'scaled % = scaled * 100':'mean'})
+    max_score_by_activity = grouped_scores.groupby(['h5pactivityid']).agg({'scaled % = scaled * 100':'max'})
 
     max_score_by_activity = max_score_by_activity.reset_index()
-    max_score_by_activity = max_score_by_activity.rename(columns = {'h5pactivityid':'Activity ID', 'rawscore (score received)':'Score'})
+    max_score_by_activity = max_score_by_activity.rename(columns = {'h5pactivityid':'Activity ID', 'scaled % = scaled * 100':'Score'})
     max_score_by_activity.fillna(0)
     max_score_by_activity['Activity ID'] = max_score_by_activity['Activity ID'].astype(float).astype(int).astype(str)
 
-    return px.bar(max_score_by_activity, x = "Activity ID", y="Score", title = 'Mean Score by Activity')
+    return px.bar(max_score_by_activity, x = "Activity ID", y="Score", title = 'Mean Scaled Score by Activity')
+
+
+
 
 
 
@@ -208,4 +212,6 @@ def build_graph(graph_type, first, second, third):
     return fig
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+   #app.run_server(debug=False)
+   webbrowser.get(browser).open("http://127.0.0.1:8000/")
+   app.run_server(port=8000, host='127.0.0.1')
